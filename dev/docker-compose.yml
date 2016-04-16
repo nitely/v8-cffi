@@ -1,0 +1,6 @@
+version: '2'
+services:
+  v8cffi:
+    build: .
+    volumes:
+      - ..:/code/src

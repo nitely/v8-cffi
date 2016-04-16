@@ -1,0 +1,4 @@
+recursive-include v8cffi *
+include LICENSE
+include README.md
+include requirements.txt
