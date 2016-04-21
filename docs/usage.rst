@@ -20,11 +20,11 @@ This is the most simple and limited form of usage.
 A platform, VM and global context are created when
 calling ``set_up``, then the global context can be
 retrieve by calling ``get_context`` from anywhere
-in the application, even from other threads.
+within the application, even from other threads.
 
-The normal usage is to ``set_up``, ``get_context``
-and ``load_libs`` at the start of the application,
-then call ``run_script`` in many other places.
+The normal usage is to ``set_up`` and ``load_libs``
+at the start of the application, then call
+``run_script`` in many other places.
 
 One thing to have in mind is the context is `global`,
 this means any modification to the global scope will
@@ -97,7 +97,8 @@ another python thread can run code in a different VM.
 
 In case two python threads are using the `same` VM,
 the VM will prevent them from running at the same time.
-But both will block, allowing other python threads to run.
+But both will block and release the GIL,
+allowing other python threads to run.
 
 At last, creating many Context allows JS code run without
 sharing the same global scope.
