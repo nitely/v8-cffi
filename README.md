@@ -23,7 +23,7 @@ shortcuts.set_up()
 
 ctx = shortcuts.get_context()
 ctx.load_libs(['./foo_bundled.js'])
-ctx.eval('foo.render("hola mundo");')
+ctx.run_script('foo.render("hola mundo");')
 # "hola mundo"
 ```
 
