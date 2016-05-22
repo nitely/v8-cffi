@@ -8,13 +8,10 @@ from v8cffi.platform import platform
 
 
 def start():
-    argv = ['v8cffi', 'discover']
-
-    if len(sys.argv) > 1:
-        argv = sys.argv
-
     with platform as _:
-        unittest.main(module=None, argv=argv)
+        unittest.main(
+            module=None,
+            argv=['v8cffi', 'discover'])
 
 
 if __name__ == '__main__':
