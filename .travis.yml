@@ -12,4 +12,4 @@ install:
   - pip install -r requirements.txt
   - pip install coveralls
 script:
-  - python ./runtests.py
+  - python setup.py -q test
