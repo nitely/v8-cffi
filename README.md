@@ -7,6 +7,8 @@ Embed the V8 Javascript engine into Python.
 
 ## Compatibility
 
+* GCC +4.8
+* G++ +4.8
 * Python 3.4 and 3.5
 
 > *Note:* ***Linux-x64*** *is the only (officially) supported platform.
