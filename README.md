@@ -9,7 +9,7 @@ Embed the V8 Javascript engine into Python.
 
 * Python 3.4 and 3.5
 
-> *Note: **Linux-x64** is the only (officially) supported platform.
+> *Note:* ***Linux-x64*** *is the only (officially) supported platform.
   To build the binaries for other platforms, the `./dev` steps
   must be adapted (probably to vagrant instead of docker) accordingly.
   PRs are welcome.*
