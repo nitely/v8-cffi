@@ -33,7 +33,8 @@ Read the [docs](http://v8-cffi.readthedocs.org/en/latest/).
 ## Notes
 
 * Currently ships with V8 4.9.385.33 (stable).
-* This repo contains V8 static files for Linux-x64.
+* This repo contains V8 static files for Linux-x64,
+  built with Ubuntu 12.
 
 
 ## Resources
