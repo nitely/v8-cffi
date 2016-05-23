@@ -64,9 +64,9 @@ RUN touch /var/lib/rpm/* \
     bzip2-devel
 
 ENV FORCE_UNSAFE_CONFIGURE=1
-RUN wget http://ftp.gnu.org/gnu/tar/tar-1.28.tar.gz \
-    && tar xzf tar-1.28.tar.gz \
-    && cd tar-1.28 \
+RUN wget http://ftp.gnu.org/gnu/tar/tar-1.29.tar.gz \
+    && tar xzf tar-1.29.tar.gz \
+    && cd tar-1.29 \
     && ./configure prefix=/usr/local/tar \
     && make \
     && make install
