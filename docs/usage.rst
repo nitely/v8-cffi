@@ -13,18 +13,18 @@ Quick-start
 
     ctx = shortcuts.get_context()
     ctx.load_libs(['./foo_bundled.js'])
-    ctx.eval('foo.render("hola mundo");')
+    ctx.run_script('foo.render("hola mundo");')
     # "hola mundo"
 
 This is the most simple and limited form of usage.
 A platform, VM and global context are created when
 calling ``set_up``, then the global context can be
 retrieve by calling ``get_context`` from anywhere
-in the application, even from other threads.
+within the application, even from other threads.
 
-The normal usage is to ``set_up``, ``get_context``
-and ``load_libs`` at the start of the application,
-then call ``eval`` in many other places.
+The normal usage is to ``set_up`` and ``load_libs``
+at the start of the application, then call
+``run_script`` in many other places.
 
 One thing to have in mind is the context is `global`,
 this means any modification to the global scope will
@@ -47,11 +47,11 @@ Multiple VMs & contexts
         with p.create_vm() as vm:
             with vm.create_context() as ctx:
                 ctx.load_libs(['./foo_bundled.js'])
-                res = ctx.eval('foo.render("hola mundo");')
+                res = ctx.run_script('foo.render("hola mundo");')
 
             with vm.create_context() as ctx_b:
                 ctx_b.load_libs(['./bar.js', './baz.js'])
-                res_b = ctx_b.eval('baz.render("hello world");')
+                res_b = ctx_b.run_script('baz.render("hello world");')
 
         with p.create_vm() as vm_b:
             # ...
@@ -91,13 +91,14 @@ reuse and obtain N times the number of opts/s
 (where N is the number of VMs).
 
 Every VM should run in a different
-python thread, so when calling ``eval``,
+python thread, so when calling ``run_script``,
 the thread blocks (the GIL is released) and
 another python thread can run code in a different VM.
 
 In case two python threads are using the `same` VM,
 the VM will prevent them from running at the same time.
-But both will block, allowing other python threads to run.
+But both will block and release the GIL,
+allowing other python threads to run.
 
 At last, creating many Context allows JS code run without
 sharing the same global scope.

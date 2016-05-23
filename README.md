@@ -7,9 +7,11 @@ Embed the V8 Javascript engine into Python.
 
 ## Compatibility
 
+* GCC +4.8
+* G++ +4.8
 * Python 3.4 and 3.5
 
-> *Note: **Linux-x64** is the only (officially) supported platform.
+> *Note:* ***Linux-x64*** *is the only (officially) supported platform.
   To build the binaries for other platforms, the `./dev` steps
   must be adapted (probably to vagrant instead of docker) accordingly.
   PRs are welcome.*
@@ -23,7 +25,7 @@ shortcuts.set_up()
 
 ctx = shortcuts.get_context()
 ctx.load_libs(['./foo_bundled.js'])
-ctx.eval('foo.render("hola mundo");')
+ctx.run_script('foo.render("hola mundo");')
 # "hola mundo"
 ```
 
@@ -33,7 +35,9 @@ Read the [docs](http://v8-cffi.readthedocs.org/en/latest/).
 ## Notes
 
 * Currently ships with V8 4.9.385.33 (stable).
-* This repo contains V8 static files for Linux-x64.
+* This repo contains V8 static files for Linux-x64,
+  built with CentOS 6.7 (glibc 2.12),
+  known to work in Ubuntu 14.04 and 16.04.
 
 
 ## Resources
