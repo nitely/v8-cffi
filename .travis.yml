@@ -1,11 +1,11 @@
 language: python
 
 # Need +gcc4.8
-sudo: required
-dist: trusty
+#sudo: required
+#dist: trusty
 
 # Use container-based infrastructure
-# sudo: false
+sudo: false
 
 python:
   - "3.4"
