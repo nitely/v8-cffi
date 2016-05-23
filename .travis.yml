@@ -1,8 +1,8 @@
 language: python
 
 # Need +gcc4.8
-#sudo: required
-#dist: trusty
+sudo: required
+dist: trusty
 
 # Use container-based infrastructure
 #sudo: false
@@ -15,11 +15,5 @@ install:
   - pip install --upgrade pip
   - pip install -r requirements.txt
   - pip install coveralls
-  - sudo apt-get install python-software-properties
-  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update
-  - sudo apt-get install gcc-4.8
-  - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 50
-  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 50
 script:
   - python setup.py -q test
