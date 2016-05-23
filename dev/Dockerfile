@@ -59,7 +59,7 @@ ENV PATH /usr/local/git/bin:$PATH
 
 # Tar 1.28
 RUN touch /var/lib/rpm/* \
-    yum install -y \
+    && yum install -y \
     bzip2 \
     bzip2-devel
 
