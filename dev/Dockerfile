@@ -9,6 +9,15 @@ MAINTAINER Esteban Castro Borsani <ecastroborsani@gmail.com>
 # GCC +4.8
 # G++ +4.8
 
+#
+# The "touch /var/lib/rpm/*"
+# before every "yum install"
+# is a workaround to
+# "Rpmdb checksum is invalid: dCDPT(pkg checksums)"
+# errors, for builds in hub.docker.com
+# See: https://github.com/docker/docker/issues/10180
+#
+
 
 RUN touch /var/lib/rpm/* \
     && yum install -y \
@@ -112,12 +121,28 @@ RUN cd /usr/local/bin \
     && rm python \
     && rm tar
 
+RUN mkdir -p /code/out/release
+
 # Convert thin archives into normal ones,
 # the alternative is to add 'standalone_static_library': 1
 # to GYP build file
 RUN cd /code/build/v8/out/x64.release \
     && for lib in `find -name '*.a'`; \
-        do ar -t $lib | xargs ar rvs $lib.new && mv -v $lib.new $lib; \
+        do ar -t $lib | xargs ar rvs $lib.new \
+        && mv -v $lib.new /code/out/release/$(basename $lib); \
     done
+
+# Copy required bin files
+# and API headers
+RUN cd /code/build/v8 \
+    && cp -v LICENSE.v8 /code/out/LICENSE.v8 \
+    && cp -v -R include/ /code/out/include/ \
+    \
+    && cd /code/build/v8/out/x64.release \
+    && cp -v natives_blob.bin /code/out/natives_blob.bin \
+    && cp -v snapshot_blob.bin /code/out/snapshot_blob.bin
+
+# Clean up
+RUN rm -rf /code/build
 
 WORKDIR /code
