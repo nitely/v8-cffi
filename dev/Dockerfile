@@ -93,8 +93,8 @@ RUN wget http://ftp.gnu.org/gnu/tar/tar-1.29.tar.gz \
 # Set Python 2.7 as default
 # Set tar 1.28 as default
 RUN cd /usr/local/bin \
-	&& ln -s python2.7 python \
-	&& ln -s /usr/local/tar/bin/tar tar
+    && ln -s python2.7 python \
+    && ln -s /usr/local/tar/bin/tar tar
 
 # Setup depot-tools
 # Remove .git to disable auto update
@@ -135,7 +135,7 @@ RUN mkdir -p /code/v8/release
 RUN cd /code/build/v8/out/x64.release \
     && for lib in `find -name '*.a'`; \
         do ar -t $lib | xargs ar rvs $lib.new \
-        && mv -v $lib.new /code/v8/release/$(basename $lib); \
+           && mv -v $lib.new /code/v8/release/$(basename $lib); \
     done
 
 # Copy required bin files
