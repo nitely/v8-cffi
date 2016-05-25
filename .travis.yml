@@ -7,6 +7,10 @@ language: python
 # Use container-based infrastructure
 #sudo: false
 
+# Ubuntu 12.04 is expected,
+# travis may upgrade to 14.04
+# in the future
+
 python:
   - "3.4"
   - "3.5"

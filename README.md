@@ -37,7 +37,7 @@ Read the [docs](http://v8-cffi.readthedocs.org/en/latest/).
 * Currently ships with V8 4.9.385.33 (stable).
 * This repo contains V8 static files for Linux-x64,
   built with CentOS 6.7 (glibc 2.12),
-  known to work in Ubuntu 14.04 and 16.04.
+  it's known to work in Ubuntu 12.04/14.04/16.04.
 
 
 ## Resources
