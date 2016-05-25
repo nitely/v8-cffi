@@ -14,8 +14,8 @@ MAINTAINER Esteban Castro Borsani <ecastroborsani@gmail.com>
 # G++ +4.8
 
 #
-# The "yum clean all"
-# after every "yum install"
+# The "touch /var/lib/rpm/* \"
+# before every "yum install"
 # is a workaround to
 # "Rpmdb checksum is invalid: dCDPT(pkg checksums)"
 # errors, for builds in hub.docker.com
@@ -26,7 +26,8 @@ MAINTAINER Esteban Castro Borsani <ecastroborsani@gmail.com>
 RUN mkdir -p /code/build
 WORKDIR /code/build
 
-RUN yum install -y \
+RUN touch /var/lib/rpm/* \
+    && yum install -y \
     openssl \
     openssl-devel \
     libffi-devel \
@@ -38,6 +39,7 @@ RUN yum install -y \
 
 # GCC 4.8.2
 RUN wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo \
+    && touch /var/lib/rpm/* \
     && yum install -y \
     devtoolset-2-gcc \
     devtoolset-2-binutils \
@@ -56,7 +58,8 @@ RUN python2.7 -m ensurepip \
     && python2.7 -m pip install pyOpenSSL
 
 # Git 2
-RUN yum install -y \
+RUN touch /var/lib/rpm/* \
+    && yum install -y \
     curl-devel \
     expat-devel \
     gettext-devel \
@@ -73,7 +76,8 @@ RUN wget https://www.kernel.org/pub/software/scm/git/git-2.7.4.tar.gz \
 ENV PATH /usr/local/git/bin:$PATH
 
 # Tar 1.28
-RUN yum install -y \
+RUN touch /var/lib/rpm/* \
+    && yum install -y \
     bzip2 \
     bzip2-devel \
     && yum clean all
