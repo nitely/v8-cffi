@@ -55,7 +55,7 @@ RUN wget http://www.python.org/ftp/python/2.7.11/Python-2.7.11.tgz \
     && make altinstall
 
 RUN python2.7 -m ensurepip \
-    && python2.7 -m pip install pyOpenSSL
+    && python2.7 -m pip install pyOpenSSL==16.0.0
 
 # Git 2
 RUN touch /var/lib/rpm/* \
@@ -134,7 +134,7 @@ RUN mkdir -p /code/v8/release
 # to GYP build file
 RUN cd /code/build/v8/out/x64.release \
     && for lib in `find -name '*.a'`; \
-        do ar -t $lib | xargs ar rvs $lib.new \
+        do ar -t $lib | xargs ar Drvs $lib.new \
            && mv -v $lib.new /code/v8/release/$(basename $lib); \
     done
 
