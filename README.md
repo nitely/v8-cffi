@@ -1,5 +1,10 @@
 # V8-CFFI
 
+[![Build Status](https://img.shields.io/travis/nitely/v8-cffi.svg?style=flat-square)](https://travis-ci.org/nitely/v8-cffi)
+[![Coverage Status](https://img.shields.io/coveralls/nitely/v8-cffi.svg?style=flat-square)](https://coveralls.io/r/nitely/v8-cffi)
+[![pypi](https://img.shields.io/pypi/v/v8-cffi.svg?style=flat-square)](https://pypi.python.org/pypi/v8-cffi)
+[![licence](https://img.shields.io/pypi/l/v8-cffi.svg?style=flat-square)](https://raw.githubusercontent.com/nitely/v8-cffi/master/LICENSE)
+
 Embed the V8 Javascript engine into Python.
 
 > *Note: The initial purpose of this library is to render React components server side.*
@@ -37,7 +42,7 @@ Read the [docs](http://v8-cffi.readthedocs.org/en/latest/).
 * Currently ships with V8 4.9.385.33 (stable).
 * This repo contains V8 static files for Linux-x64,
   built with CentOS 6.7 (glibc 2.12),
-  known to work in Ubuntu 14.04 and 16.04.
+  it's known to work in Ubuntu 12.04/14.04/16.04.
 
 
 ## Resources

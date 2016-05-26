@@ -2,5 +2,7 @@ version: '2'
 services:
   v8cffi:
     build: .
+    image: dev_v8cffi
+    container_name: v8cffi_master
     volumes:
       - ..:/code/src
