@@ -17,7 +17,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='v8-cffi',
-    version='0.0.1',
+    version='0.2.0.dev1',
     description='Embed the V8 Javascript engine into Python.',
     author='Esteban Castro Borsani',
     author_email='ecastroborsani@gmail.com',
