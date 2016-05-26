@@ -1,6 +1,6 @@
 clean:
 	rm -fr dist/ doc/_build/
-	rm -fr v8cffi/src/*.o *.egg-info *.so *.cpp
+	rm -fr v8cffi/src/*.o *.egg-info *.so *.cpp build
 	find . -name '__pycache__' | xargs rm -rf
 
 docs:
