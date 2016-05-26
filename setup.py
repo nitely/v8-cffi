@@ -11,13 +11,14 @@ README = open(
 REQUIREMENTS = open(
     os.path.join(os.path.dirname(__file__), 'requirements.txt'),
     encoding='utf-8').read()
+VERSION = __import__('v8cffi').__version__
 
 # allow setup.py to be run from any path
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='v8-cffi',
-    version='0.2.0.dev1',
+    version=VERSION,
     description='Embed the V8 Javascript engine into Python.',
     author='Esteban Castro Borsani',
     author_email='ecastroborsani@gmail.com',
