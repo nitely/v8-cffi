@@ -12,10 +12,13 @@ build: clean
 test: build
 	python runtests.py
 
+benchmarks: build
+	python benchmarks.py
+
 sdist: test clean
 	python setup.py sdist
 
 release: test clean
 	python setup.py sdist upload
 
-.PHONY: clean docs build test sdist release
+.PHONY: clean docs build test benchmarks sdist release
