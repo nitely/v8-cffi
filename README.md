@@ -70,7 +70,9 @@ or [alt](https://github.com/mitsuhiko/lucumr/blob/master/2013/8/18/beautiful-nat
 This will run some silly benchmarks.
 It runs about ~110k ops/s on a 1.8GHz CPU.
 
-`$ python ./benchmark.py`
+```
+$ make benchmarks
+```
 
 
 ## License

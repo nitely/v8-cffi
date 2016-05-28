@@ -40,4 +40,5 @@ $ tree --charset=ascii
 It currently builds Linux_x64 libraries.
 
 1. Install [Docker Compose](https://docs.docker.com/compose/install/)
-2. Run `$ bash ./up.sh`
+2. Run `$ make build` to build and copy binaries into `../v8cffi/lib/v8`.
+3. Run `$ make clean` to remove the images & container.
