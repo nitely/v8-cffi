@@ -206,3 +206,36 @@ class ContextTest(unittest.TestCase):
         """
         with context.Context(self.vm) as ctx:
             self.assertEqual("20", ctx.run_script('Math.max(10, 20);'))
+
+    def test_run_script_trace_back(self):
+        """
+        It should run the script on V8\
+        and get a useful traceback
+        """
+        def get_exception_message(ctx, script):
+            try:
+                return ctx.run_script(script)
+            except exceptions.V8JSError as ex:
+                return str(ex)
+
+        script_oops = (
+            'function oops() {\n'
+            '  thereMayBeErrors();\n'
+            '  var my_var_2;\n'
+            '}')
+
+        # todo: anonymous -> file_name
+        with context.Context(self.vm) as ctx:
+            ctx.run_script(script_oops)
+            self.assertEqual(
+                'ReferenceError: thereMayBeErrors is not defined\n'
+                '    at oops (<anonymous>:2:3)\n'
+                '    at <anonymous>:1:1',
+                get_exception_message(ctx, 'oops()'))
+            self.assertEqual(
+                'ReferenceError: nonExistentFunc is not defined\n'
+                '    at <anonymous>:1:1',
+                get_exception_message(ctx, 'nonExistentFunc();'))
+            self.assertEqual(
+                'SyntaxError: Unexpected token [',
+                get_exception_message(ctx, 'function[]();'))

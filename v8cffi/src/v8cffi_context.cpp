@@ -49,7 +49,7 @@ std::string Context::runScript(const std::string &input_script)
 
   if (result_maybe.IsEmpty())
   {
-    v8::String::Utf8Value error_utf8_str(try_catch.Exception());
+    v8::String::Utf8Value error_utf8_str(try_catch.StackTrace());
     throw v8cffi_exceptions::JSError(
       std::string(*error_utf8_str, error_utf8_str.length()));
   }
