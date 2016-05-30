@@ -21,6 +21,16 @@ Context::~Context() {
 }
 
 
+v8::Local<v8::String> Context::newString(const std::string &str)
+{
+  return v8::String::NewFromUtf8(
+    m_isolate,
+    str.c_str(),
+    v8::NewStringType::kNormal,
+    str.length()).ToLocalChecked();
+}
+
+
 std::string Context::runScript(
   const std::string &input_script,
   const std::string &identifier)
@@ -31,19 +41,11 @@ std::string Context::runScript(
   v8::Local<v8::Context> context = v8::Local<v8::Context>::New(
     m_isolate, m_pers_context);  // Materialize the persistent context
   v8::Context::Scope context_scope(context);
-  v8::Local<v8::String> source = v8::String::NewFromUtf8(
-    m_isolate,
-    input_script.c_str(),
-    v8::NewStringType::kNormal,
-    input_script.length()).ToLocalChecked();
-  v8::Local<v8::String> origin = v8::String::NewFromUtf8(
-    m_isolate,
-    identifier.c_str(),
-    v8::NewStringType::kNormal,
-    identifier.length()).ToLocalChecked();
-  v8::ScriptOrigin org(origin);
+  v8::Local<v8::String> source = newString(input_script);
+  v8::ScriptOrigin origin(newString(identifier));
   v8::TryCatch try_catch;
-  v8::MaybeLocal<v8::Script> script_maybe = v8::Script::Compile(context, source, &org);
+  v8::MaybeLocal<v8::Script> script_maybe = v8::Script::Compile(
+    context, source, &origin);
 
   if (script_maybe.IsEmpty())
   {
