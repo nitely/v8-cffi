@@ -223,19 +223,52 @@ class ContextTest(unittest.TestCase):
             '  thereMayBeErrors();\n'
             '  var my_var_2;\n'
             '}')
+        script_oops2 = (
+            'function oops2() {\n'
+            '  thereMayBeMoreErrors();\n'
+            '  var my_var_2;\n'
+            '}')
 
-        # todo: pretty traceback, with wavy highlight + stack-trace or error
         with context.Context(self.vm) as ctx:
             ctx.run_script(script_oops, identifier='my_file_áéíóú.js')
+            ctx.run_script(script_oops2, identifier='my_other_file.js')
             self.assertEqual(
+                'my_file_áéíóú.js:2\n'
+                '      thereMayBeErrors();\n'
+                '      ^\n'
                 'ReferenceError: thereMayBeErrors is not defined\n'
                 '    at oops (my_file_áéíóú.js:2:3)\n'
                 '    at <anonymous>:1:1',
                 get_exception_message(ctx, 'oops()'))
             self.assertEqual(
+                'my_other_file.js:2\n'
+                '      thereMayBeMoreErrors();\n'
+                '      ^\n'
+                'ReferenceError: thereMayBeMoreErrors is not defined\n'
+                '    at oops2 (my_other_file.js:2:3)\n'
+                '    at <anonymous>:1:1',
+                get_exception_message(ctx, 'oops2()'))
+            self.assertEqual(
+                '<anonymous>:1\n'
+                '    nonExistentFunc();\n'
+                '    ^\n'
                 'ReferenceError: nonExistentFunc is not defined\n'
                 '    at <anonymous>:1:1',
                 get_exception_message(ctx, 'nonExistentFunc();'))
             self.assertEqual(
+                '<anonymous>:1\n'
+                '    function[]();\n'
+                '            ^\n'
                 'SyntaxError: Unexpected token [',
                 get_exception_message(ctx, 'function[]();'))
+            # Has no .stack property
+            self.assertEqual(
+                '<anonymous>:2\n'
+                '      throw "myException";\n'
+                '      ^\n'
+                'myException',
+                get_exception_message(
+                    ctx,
+                    '(function() {\n'
+                    '  throw "myException";\n'
+                    '})();'))

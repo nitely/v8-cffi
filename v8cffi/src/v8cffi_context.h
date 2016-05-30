@@ -25,7 +25,9 @@ namespace v8cffi_context
       Context(const Context&);
       Context& operator=(const Context&);
 
-      v8::Local<v8::String> newString(const std::string &str);
+      v8::Local<v8::String> toV8String(const std::string &str);
+      std::string toCString(const v8::String::Utf8Value &str_utf8);
+      std::string prettyTraceBack(const v8::TryCatch &try_catch);
 
       v8::Isolate *m_isolate = nullptr;
       v8::Persistent<v8::Context> m_pers_context;
