@@ -21,7 +21,9 @@ Context::~Context() {
 }
 
 
-std::string Context::runScript(const std::string &input_script)
+std::string Context::runScript(
+  const std::string &input_script,
+  const std::string &identifier)
 {
   v8::Locker l(m_isolate);
   v8::Isolate::Scope isolate_scope(m_isolate);
@@ -34,8 +36,14 @@ std::string Context::runScript(const std::string &input_script)
     input_script.c_str(),
     v8::NewStringType::kNormal,
     input_script.length()).ToLocalChecked();
+  v8::Local<v8::String> origin = v8::String::NewFromUtf8(
+    m_isolate,
+    identifier.c_str(),
+    v8::NewStringType::kNormal,
+    identifier.length()).ToLocalChecked();
+  v8::ScriptOrigin org(origin);
   v8::TryCatch try_catch;
-  v8::MaybeLocal<v8::Script> script_maybe = v8::Script::Compile(context, source);
+  v8::MaybeLocal<v8::Script> script_maybe = v8::Script::Compile(context, source, &org);
 
   if (script_maybe.IsEmpty())
   {

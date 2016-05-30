@@ -7,6 +7,8 @@ from . import exceptions
 
 __all__ = ['Context']
 
+_DEFAULT_SCRIPT_NAME = '<anonymous>'
+
 
 def _read_file(path):
     with open(path, 'rb') as fh:
@@ -175,9 +177,9 @@ class Context:
         an error running the JS script
         """
         for path in scripts_paths:
-            self.run_script(_read_file(path))
+            self.run_script(_read_file(path), identifier=path)
 
-    def run_script(self, script):
+    def run_script(self, script, identifier=_DEFAULT_SCRIPT_NAME):
         """
         Run a JS script within the context.\
         All code is ran synchronously,\
@@ -185,15 +187,23 @@ class Context:
 
         :param script: utf-8 encoded or unicode string
         :type script: bytes or str
+        :param identifier: utf-8 encoded or unicode string.\
+        This is used as the name of the script\
+        (ie: in stack-traces)
+        :type identifier: bytes or str
         :return: Result of running the JS script
         :rtype: str
         :raises V8Error: if there was\
         an error running the JS script
         """
         assert isinstance(script, str) or _is_utf_8(script)
+        assert isinstance(identifier, str) or _is_utf_8(identifier)
 
         if isinstance(script, str):
             script = bytes(script, 'utf-8')
+
+        if isinstance(identifier, str):
+            identifier = bytes(identifier, 'utf-8')
 
         with _String() as output:
             with _String() as error:
@@ -201,6 +211,8 @@ class Context:
                     self._c_context[0],
                     script,
                     len(script),
+                    identifier,
+                    len(identifier),
                     output.string_ptr,
                     output.len_ptr,
                     error.string_ptr,

@@ -196,6 +196,8 @@ v8_code v8cffi_run_script(
   v8cffi_context_t *ctx,
   const char *input_script,
   size_t input_script_len,
+  const char *identifier,
+  size_t identifier_len,
   char **output,
   size_t *output_len,
   char **error,
@@ -206,7 +208,8 @@ v8_code v8cffi_run_script(
   try
   {
     output_str = AS_TYPE(v8cffi_context::Context, ctx)->runScript(
-      std::string(input_script, input_script_len));
+      std::string(input_script, input_script_len),
+      std::string(identifier, identifier_len));
   }
   catch (const v8cffi_exceptions::JSError &e)
   {

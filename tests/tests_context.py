@@ -177,7 +177,7 @@ class ContextTest(unittest.TestCase):
             with context.Context(self.vm) as ctx:
                 with patch.object(ctx, 'run_script', autospec=True) as r:
                     ctx.load_libs([path])
-                    r.assert_called_once_with(script)
+                    r.assert_called_once_with(script, identifier=path)
 
     def test_run_script(self):
         """
@@ -224,12 +224,12 @@ class ContextTest(unittest.TestCase):
             '  var my_var_2;\n'
             '}')
 
-        # todo: anonymous -> file_name
+        # todo: pretty traceback, with wavy highlight + stack-trace or error
         with context.Context(self.vm) as ctx:
-            ctx.run_script(script_oops)
+            ctx.run_script(script_oops, identifier='my_file_áéíóú.js')
             self.assertEqual(
                 'ReferenceError: thereMayBeErrors is not defined\n'
-                '    at oops (<anonymous>:2:3)\n'
+                '    at oops (my_file_áéíóú.js:2:3)\n'
                 '    at <anonymous>:1:1',
                 get_exception_message(ctx, 'oops()'))
             self.assertEqual(
