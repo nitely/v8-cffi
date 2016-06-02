@@ -25,3 +25,8 @@ indent_size = 2
 [{Makefile, makefile, GNUmakefile}]
 indent_style = tab
 indent_size = 4
+
+# C and C++
+[{*.c,*.cpp,*.cc,*.h}]
+indent_style = space
+indent_size = 2
