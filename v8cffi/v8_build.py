@@ -28,6 +28,8 @@ ffi.set_source(
         os.path.join(SRC_PATH, 'v8cffi.cpp'),
         os.path.join(SRC_PATH, 'v8cffi_context.cpp'),
         os.path.join(SRC_PATH, 'v8cffi_platform.cpp'),
+        os.path.join(SRC_PATH, 'v8cffi_trace_back.cpp'),
+        os.path.join(SRC_PATH, 'v8cffi_utils.cpp'),
         os.path.join(SRC_PATH, 'v8cffi_vm.cpp')],
     extra_objects=[
         '-Wl,--start-group',
