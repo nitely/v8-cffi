@@ -37,6 +37,55 @@ std::string Context::toCString(const v8::String::Utf8Value &str_utf8)
 }
 
 
+std::string Context::paddingOf(int padding_len)
+{
+  if (padding_len < 0)
+    return "";
+
+  std::string padding = "";
+
+  for (int i = 0; i < padding_len; i++)
+    padding += " ";
+
+  return padding;
+}
+
+
+/*
+  Return: file_name:line_num
+*/
+std::string Context::errorSource(const v8::Local<v8::Message> &message)
+{
+  v8::String::Utf8Value origin_str(
+    message->GetScriptResourceName());
+  int line_num_default = 0;
+  int line_num = message->GetLineNumber(
+    m_isolate->GetCurrentContext()).FromMaybe(line_num_default);
+  return toCString(origin_str) + ":" + std::to_string(line_num);
+}
+
+
+std::string Context::sourceLine(const v8::Local<v8::Message> &message)
+{
+  std::string source_line_str = "";
+
+  v8::MaybeLocal<v8::String> source_line_maybe = message->GetSourceLine(
+    m_isolate->GetCurrentContext());
+
+  if (!source_line_maybe.IsEmpty())
+  {
+    v8::Local<v8::Value> source_line =
+      source_line_maybe.ToLocalChecked();
+
+    if (source_line->IsString())
+      source_line_str = toCString(
+        v8::String::Utf8Value(source_line));
+  }
+
+  return source_line_str;
+}
+
+
 std::string Context::wavyLine(const v8::Local<v8::Message> &message)
 {
   std::string wavy_line = "";
@@ -45,8 +94,7 @@ std::string Context::wavyLine(const v8::Local<v8::Message> &message)
   int source_col_start = message->GetStartColumn(
     m_isolate->GetCurrentContext()).FromMaybe(source_col_start_default);
 
-  for (int i = 0; i < source_col_start; i++)
-    wavy_line += " ";
+  wavy_line += paddingOf(source_col_start);
 
   int source_col_end_default = 0;
   int source_col_end = message->GetEndColumn(
@@ -59,54 +107,9 @@ std::string Context::wavyLine(const v8::Local<v8::Message> &message)
 }
 
 
-// todo: refactor
-std::string Context::prettyTraceBack(const v8::TryCatch &try_catch)
+std::string Context::stackTrace(const v8::TryCatch &try_catch)
 {
-  std::string trace_back = "";
-  v8::String::Utf8Value error_utf8_str(try_catch.Exception());
-  v8::MaybeLocal<v8::Message> message_maybe = try_catch.Message();
-
-  // Error line with wavy underline indicator
-  if (!message_maybe.IsEmpty())
-  {
-    v8::Local<v8::Message> message = message_maybe.ToLocalChecked();
-
-    // Error source <file_name:line_num>
-    v8::String::Utf8Value origin_str(
-      message->GetScriptResourceName());
-    int line_num_default = 0;
-    int line_num = message->GetLineNumber(
-      m_isolate->GetCurrentContext()).FromMaybe(line_num_default);
-    trace_back += toCString(origin_str) +
-      ":" +
-      std::to_string(line_num) +
-      "\n";
-
-    // Source line
-    v8::MaybeLocal<v8::String> source_line_maybe = message->GetSourceLine(
-      m_isolate->GetCurrentContext());
-
-    if (!source_line_maybe.IsEmpty())
-    {
-      v8::Local<v8::Value> source_line =
-        source_line_maybe.ToLocalChecked();
-      std::string padding = "    ";
-
-      if (source_line->IsString())
-      {
-        std::string source_line_str = toCString(
-          v8::String::Utf8Value(source_line));
-
-        if (source_line_str.length() <= 240)
-        {
-          trace_back += padding + source_line_str + "\n";
-          trace_back += padding + wavyLine(message) + "\n";
-        }
-        else
-          trace_back += padding + "~Line too long to display.\n";
-      }
-    }
-  }
+  std::string stack_trace_str = "";
 
   v8::MaybeLocal<v8::Value> stack_trace_maybe = try_catch.StackTrace();
 
@@ -115,8 +118,40 @@ std::string Context::prettyTraceBack(const v8::TryCatch &try_catch)
     v8::Local<v8::Value> stack_trace = stack_trace_maybe.ToLocalChecked();
 
     if (stack_trace->IsString())
-      trace_back += toCString(v8::String::Utf8Value(stack_trace));
+      stack_trace_str = toCString(v8::String::Utf8Value(stack_trace));
   }
+
+  return stack_trace_str;
+}
+
+
+std::string Context::prettyTraceBack(const v8::TryCatch &try_catch)
+{
+  std::string trace_back = "";
+
+  v8::String::Utf8Value error_utf8_str(try_catch.Exception());
+  v8::MaybeLocal<v8::Message> message_maybe = try_catch.Message();
+
+  if (!message_maybe.IsEmpty())
+  {
+    v8::Local<v8::Message> message = message_maybe.ToLocalChecked();
+
+    trace_back += errorSource(message) + "\n";
+
+    std::string source_line = sourceLine(message);
+    std::string padding = paddingOf(4);
+
+    if (source_line.length() <= 240)
+      trace_back += padding + source_line + "\n" +
+        padding + wavyLine(message) + "\n";
+    else
+      trace_back += padding + "~Line too long to display.\n";
+  }
+
+  std::string stack_trace = stackTrace(try_catch);
+
+  if (!stack_trace.empty())
+    trace_back += stack_trace;
   else
     trace_back += toCString(error_utf8_str);
 
