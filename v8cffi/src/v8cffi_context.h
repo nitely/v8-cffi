@@ -16,7 +16,9 @@ namespace v8cffi_context
     public:
       Context(v8::Isolate *isolate);
       ~Context();
-      std::string runScript(const std::string &input_script);
+      std::string runScript(
+        const std::string &input_script,
+        const std::string &identifier);
 
     private:
       // Prevent copying. Not implemented.

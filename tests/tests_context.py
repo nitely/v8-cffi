@@ -177,7 +177,7 @@ class ContextTest(unittest.TestCase):
             with context.Context(self.vm) as ctx:
                 with patch.object(ctx, 'run_script', autospec=True) as r:
                     ctx.load_libs([path])
-                    r.assert_called_once_with(script)
+                    r.assert_called_once_with(script, identifier=path)
 
     def test_run_script(self):
         """
@@ -206,3 +206,83 @@ class ContextTest(unittest.TestCase):
         """
         with context.Context(self.vm) as ctx:
             self.assertEqual("20", ctx.run_script('Math.max(10, 20);'))
+
+    def test_run_script_trace_back(self):
+        """
+        It should run the script on V8\
+        and get a useful traceback
+        """
+        def get_exception_message(ctx, script):
+            try:
+                return ctx.run_script(script)
+            except exceptions.V8JSError as ex:
+                return str(ex)
+
+        script_oops = (
+            'function oops() {\n'
+            '  thereMayBeErrors();\n'
+            '  var my_var_2;\n'
+            '}')
+        script_oops2 = (
+            'function oops2() {\n'
+            '  thereMayBeMoreErrors();\n'
+            '  var my_var_2;\n'
+            '}')
+        var_a = 'var a;'
+        script_long = (
+            'function oops3() {\n' +
+            var_a * 100 + 'thereMayBeMoreErrors();' + var_a * 100 + '\n'
+            '}')
+
+        # todo: trim source line when too long
+        with context.Context(self.vm) as ctx:
+            ctx.run_script(script_oops, identifier='my_file_áéíóú.js')
+            ctx.run_script(script_oops2, identifier='my_other_file.js')
+            ctx.run_script(script_long)
+            self.assertEqual(
+                'my_file_áéíóú.js:2\n'
+                '      thereMayBeErrors();\n'
+                '      ^\n'
+                'ReferenceError: thereMayBeErrors is not defined\n'
+                '    at oops (my_file_áéíóú.js:2:3)\n'
+                '    at <anonymous>:1:1',
+                get_exception_message(ctx, 'oops()'))
+            self.assertEqual(
+                'my_other_file.js:2\n'
+                '      thereMayBeMoreErrors();\n'
+                '      ^\n'
+                'ReferenceError: thereMayBeMoreErrors is not defined\n'
+                '    at oops2 (my_other_file.js:2:3)\n'
+                '    at <anonymous>:1:1',
+                get_exception_message(ctx, 'oops2()'))
+            self.assertEqual(
+                '<anonymous>:2\n'
+                '    ~Line too long to display.\n'
+                'ReferenceError: thereMayBeMoreErrors is not defined\n'
+                '    at oops3 (<anonymous>:2:601)\n'
+                '    at <anonymous>:1:1',
+                get_exception_message(ctx, 'oops3()'))
+            self.assertEqual(
+                '<anonymous>:1\n'
+                '    nonExistentFunc();\n'
+                '    ^\n'
+                'ReferenceError: nonExistentFunc is not defined\n'
+                '    at <anonymous>:1:1',
+                get_exception_message(ctx, 'nonExistentFunc();'))
+            self.assertEqual(
+                '<anonymous>:1\n'
+                '    function[]();\n'
+                '            ^\n'
+                'SyntaxError: Unexpected token [',
+                get_exception_message(ctx, 'function[]();'))
+            # Has no .stack property
+            self.assertEqual(
+                '<anonymous>:2\n'
+                '      throw "myException";\n'
+                '      ^\n'
+                'myException',
+                get_exception_message(
+                    ctx,
+                    '(function() {\n'
+                    '  throw "myException";\n'
+                    '})();'))

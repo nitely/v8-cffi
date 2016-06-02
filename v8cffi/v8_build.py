@@ -28,6 +28,8 @@ ffi.set_source(
         os.path.join(SRC_PATH, 'v8cffi.cpp'),
         os.path.join(SRC_PATH, 'v8cffi_context.cpp'),
         os.path.join(SRC_PATH, 'v8cffi_platform.cpp'),
+        os.path.join(SRC_PATH, 'v8cffi_trace_back.cpp'),
+        os.path.join(SRC_PATH, 'v8cffi_utils.cpp'),
         os.path.join(SRC_PATH, 'v8cffi_vm.cpp')],
     extra_objects=[
         '-Wl,--start-group',
@@ -77,6 +79,8 @@ ffi.cdef(
       v8cffi_context_t *ctx,
       const char *input_script,
       size_t input_script_len,
+      const char *identifier,
+      size_t identifier_len,
       char **output,
       size_t *output_len,
       char **error,
