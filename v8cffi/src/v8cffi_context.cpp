@@ -51,48 +51,58 @@ std::string Context::prettyTraceBack(const v8::TryCatch &try_catch)
 
     // Error source <file_name:line_num>
     v8::String::Utf8Value origin_str(
-        message->GetScriptResourceName());
+      message->GetScriptResourceName());
     int line_num_default = 0;
     int line_num = message->GetLineNumber(
-        m_isolate->GetCurrentContext()).FromMaybe(line_num_default);
+      m_isolate->GetCurrentContext()).FromMaybe(line_num_default);
     trace_back += toCString(origin_str) +
       ":" +
       std::to_string(line_num) +
       "\n";
 
+    // Source line
     v8::MaybeLocal<v8::String> source_line_maybe = message->GetSourceLine(
       m_isolate->GetCurrentContext());
 
-    // Error line
     if (!source_line_maybe.IsEmpty())
     {
-        v8::Local<v8::Value> source_line =
-          source_line_maybe.ToLocalChecked();
-        std::string padding = "    ";
+      v8::Local<v8::Value> source_line =
+        source_line_maybe.ToLocalChecked();
+      std::string padding = "    ";
 
-        if (source_line->IsString())
+      if (source_line->IsString())
+      {
+        std::string source_line_str = toCString(
+          v8::String::Utf8Value(source_line));
+
+        if (source_line_str.length() <= 240)
+        {
           trace_back += padding +
-            toCString(v8::String::Utf8Value(source_line)) +
+            source_line_str +
             "\n" +
             padding;
+
+          // Wavy underline
+          int source_col_start_default = 0;
+          int source_col_start = message->GetStartColumn(
+            m_isolate->GetCurrentContext()).FromMaybe(source_col_start_default);
+
+          for (int i = 0; i < source_col_start; i++)
+            trace_back += " ";
+
+          int source_col_end_default = 0;
+          int source_col_end = message->GetEndColumn(
+            m_isolate->GetCurrentContext()).FromMaybe(source_col_end_default);
+
+          for (int i = source_col_start; i < source_col_end; i++)
+            trace_back += "^";
+
+          trace_back += "\n";
+        }
+        else
+          trace_back += padding + "~Line too long to display.\n";
+      }
     }
-
-    // Wavy underline
-    int source_col_start_default = 0;
-    int source_col_start = message->GetStartColumn(
-      m_isolate->GetCurrentContext()).FromMaybe(source_col_start_default);
-
-    for (int i = 0; i < source_col_start; i++)
-      trace_back += " ";
-
-    int source_col_end_default = 0;
-    int source_col_end = message->GetEndColumn(
-      m_isolate->GetCurrentContext()).FromMaybe(source_col_end_default);
-
-    for (int i = source_col_start; i < source_col_end; i++)
-      trace_back += "^";
-
-    trace_back += "\n";
   }
 
   v8::MaybeLocal<v8::Value> stack_trace_maybe = try_catch.StackTrace();
