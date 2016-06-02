@@ -37,6 +37,28 @@ std::string Context::toCString(const v8::String::Utf8Value &str_utf8)
 }
 
 
+std::string Context::wavyLine(const v8::Local<v8::Message> &message)
+{
+  std::string wavy_line = "";
+
+  int source_col_start_default = 0;
+  int source_col_start = message->GetStartColumn(
+    m_isolate->GetCurrentContext()).FromMaybe(source_col_start_default);
+
+  for (int i = 0; i < source_col_start; i++)
+    wavy_line += " ";
+
+  int source_col_end_default = 0;
+  int source_col_end = message->GetEndColumn(
+    m_isolate->GetCurrentContext()).FromMaybe(source_col_end_default);
+
+  for (int i = source_col_start; i < source_col_end; i++)
+    wavy_line += "^";
+
+  return wavy_line;
+}
+
+
 // todo: refactor
 std::string Context::prettyTraceBack(const v8::TryCatch &try_catch)
 {
@@ -77,27 +99,8 @@ std::string Context::prettyTraceBack(const v8::TryCatch &try_catch)
 
         if (source_line_str.length() <= 240)
         {
-          trace_back += padding +
-            source_line_str +
-            "\n" +
-            padding;
-
-          // Wavy underline
-          int source_col_start_default = 0;
-          int source_col_start = message->GetStartColumn(
-            m_isolate->GetCurrentContext()).FromMaybe(source_col_start_default);
-
-          for (int i = 0; i < source_col_start; i++)
-            trace_back += " ";
-
-          int source_col_end_default = 0;
-          int source_col_end = message->GetEndColumn(
-            m_isolate->GetCurrentContext()).FromMaybe(source_col_end_default);
-
-          for (int i = source_col_start; i < source_col_end; i++)
-            trace_back += "^";
-
-          trace_back += "\n";
+          trace_back += padding + source_line_str + "\n";
+          trace_back += padding + wavyLine(message) + "\n";
         }
         else
           trace_back += padding + "~Line too long to display.\n";
