@@ -5,10 +5,8 @@ import os
 from cffi import FFI
 
 
-STATIC_LIBS_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), 'src', 'v8', 'release')
-SRC_PATH = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), 'src')
+SRC_PATH = os.path.join('v8cffi', 'src')
+STATIC_LIBS_PATH = os.path.join(SRC_PATH, 'v8', 'release')
 
 ffi = FFI()
 

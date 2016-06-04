@@ -55,7 +55,7 @@ class VM:
 
     def is_alive(self):
         """
-        Check is initialized and was not exited
+        Check the vm is initialized and was not exited
 
         :return: Whether the vm is alive or not
         :rtype: bool
