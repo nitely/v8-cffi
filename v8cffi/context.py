@@ -201,10 +201,10 @@ class Context:
         assert isinstance(identifier, six.text_type) or _is_utf_8(identifier)
 
         if isinstance(script, six.text_type):
-            script = six.binary_type(script, 'utf-8')
+            script = script.encode('utf-8')
 
         if isinstance(identifier, six.text_type):
-            identifier = six.binary_type(identifier, 'utf-8')
+            identifier = identifier.encode('utf-8')
 
         with _String() as output:
             with _String() as error:

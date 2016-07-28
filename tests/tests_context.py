@@ -241,16 +241,19 @@ class ContextTest(unittest.TestCase):
 
         # todo: trim source line when too long
         with context.Context(self.vm) as ctx:
-            ctx.run_script(script_oops, identifier='my_file_áéíóú.js')
+            ctx.run_script(script_oops, identifier=six.text_type('my_file_áéíóú.js', 'utf-8'))
             ctx.run_script(script_oops2, identifier='my_other_file.js')
             ctx.run_script(script_long)
             self.assertEqual(
-                'my_file_áéíóú.js:2\n'
-                '      thereMayBeErrors();\n'
-                '      ^\n'
-                'ReferenceError: thereMayBeErrors is not defined\n'
-                '    at oops (my_file_áéíóú.js:2:3)\n'
-                '    at <anonymous>:1:1',
+                six.text_type(
+                    'my_file_áéíóú.js:2\n'
+                    '      thereMayBeErrors();\n'
+                    '      ^\n'
+                    'ReferenceError: thereMayBeErrors is not defined\n'
+                    '    at oops (my_file_áéíóú.js:2:3)\n'
+                    '    at <anonymous>:1:1',
+                    'utf-8'
+                ),
                 get_exception_message(ctx, 'oops()'))
             self.assertEqual(
                 'my_other_file.js:2\n'
