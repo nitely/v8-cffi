@@ -7,6 +7,7 @@ import os
 import tempfile
 from contextlib import contextmanager
 
+import six
 from v8cffi.platform import platform
 from v8cffi.vm import VM
 from v8cffi import exceptions
@@ -47,7 +48,7 @@ class StringTest(unittest.TestCase):
             string_ptr = s.string_ptr
             s.string_ptr = [context.ffi.new('char[]', b'foo')]
             s.len_ptr[0] = 3
-            self.assertEqual(str(s), 'foo')
+            self.assertEqual(six.text_type(s), 'foo')
             s.string_ptr = string_ptr
 
     def test_to_bytes(self):

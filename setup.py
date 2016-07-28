@@ -4,13 +4,14 @@
 import os
 from setuptools import setup, find_packages
 
+__file_dir__ = os.path.dirname(__file__
 
-README = open(
-    os.path.join(os.path.dirname(__file__), 'README.md'),
-    encoding='utf-8').read()
-REQUIREMENTS = open(
-    os.path.join(os.path.dirname(__file__), 'requirements.txt'),
-    encoding='utf-8').read()
+with open(os.path.join(__file_dir__, 'README.md')) as f:
+    README = f.read()
+
+with open(os.path.join(__file_dir__, 'requirements.txt')) as f:
+    REQUIREMENTS = f.read()
+
 VERSION = __import__('v8cffi').__version__
 
 # allow setup.py to be run from any path
@@ -39,6 +40,8 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: Implementation :: CPython',
         'Topic :: Internet :: WWW/HTTP',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content'])
