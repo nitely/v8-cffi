@@ -190,7 +190,7 @@ class ContextTest(unittest.TestCase):
         """
         script_foo = b'var foo = "foo!";'
         script_bar = 'var bar = "bar!";'
-        script_special = 'var txt = "áéíóú";'
+        script_special = six.text_type('var txt = "áéíóú";', 'utf-8')
 
         with context.Context(self.vm) as ctx:
             ctx.run_script(script_foo)
@@ -198,7 +198,7 @@ class ContextTest(unittest.TestCase):
             ctx.run_script(script_special)
             self.assertEqual("foo!", ctx.run_script(b'foo'))
             self.assertEqual("bar!", ctx.run_script('bar'))
-            self.assertEqual("áéíóú", ctx.run_script('txt'))
+            self.assertEqual(six.text_type("áéíóú", 'utf-8'), ctx.run_script('txt'))
             self.assertRaises(exceptions.V8JSError, ctx.run_script, 'baz')
             self.assertRaises(exceptions.V8JSError, ctx.run_script, 'function[]();')
 
@@ -221,7 +221,7 @@ class ContextTest(unittest.TestCase):
             try:
                 return ctx.run_script(script)
             except exceptions.V8JSError as ex:
-                return str(ex)
+                return six.text_type(ex)
 
         script_oops = (
             'function oops() {\n'
