@@ -190,7 +190,7 @@ class ContextTest(unittest.TestCase):
         """
         script_foo = b'var foo = "foo!";'
         script_bar = 'var bar = "bar!";'
-        script_special = six.text_type('var txt = "áéíóú";', 'utf-8')
+        script_special = u'var txt = "áéíóú";'.encode('utf-8')
 
         with context.Context(self.vm) as ctx:
             ctx.run_script(script_foo)
@@ -198,7 +198,7 @@ class ContextTest(unittest.TestCase):
             ctx.run_script(script_special)
             self.assertEqual("foo!", ctx.run_script(b'foo'))
             self.assertEqual("bar!", ctx.run_script('bar'))
-            self.assertEqual(six.text_type("áéíóú", 'utf-8'), ctx.run_script('txt'))
+            self.assertEqual(u"áéíóú".encode('utf-8'), ctx.run_script('txt'))
             self.assertRaises(exceptions.V8JSError, ctx.run_script, 'baz')
             self.assertRaises(exceptions.V8JSError, ctx.run_script, 'function[]();')
 
@@ -241,19 +241,16 @@ class ContextTest(unittest.TestCase):
 
         # todo: trim source line when too long
         with context.Context(self.vm) as ctx:
-            ctx.run_script(script_oops, identifier=six.text_type('my_file_áéíóú.js', 'utf-8'))
+            ctx.run_script(script_oops, identifier=u'my_file_áéíóú.js'.encode('utf-8'))
             ctx.run_script(script_oops2, identifier='my_other_file.js')
             ctx.run_script(script_long)
             self.assertEqual(
-                six.text_type(
-                    'my_file_áéíóú.js:2\n'
+                    u'my_file_áéíóú.js:2\n'
                     '      thereMayBeErrors();\n'
                     '      ^\n'
                     'ReferenceError: thereMayBeErrors is not defined\n'
                     '    at oops (my_file_áéíóú.js:2:3)\n'
-                    '    at <anonymous>:1:1',
-                    'utf-8'
-                ),
+                    '    at <anonymous>:1:1'.encode('utf-8'),
                 get_exception_message(ctx, 'oops()'))
             self.assertEqual(
                 'my_other_file.js:2\n'
