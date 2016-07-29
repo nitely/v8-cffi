@@ -198,7 +198,7 @@ class ContextTest(unittest.TestCase):
             ctx.run_script(script_special)
             self.assertEqual("foo!", ctx.run_script(b'foo'))
             self.assertEqual("bar!", ctx.run_script('bar'))
-            self.assertEqual(u"áéíóú".encode('utf-8'), ctx.run_script('txt'))
+            self.assertEqual(u"áéíóú".encode('utf-8'), ctx.run_script('txt').encode('utf-8'))
             self.assertRaises(exceptions.V8JSError, ctx.run_script, 'baz')
             self.assertRaises(exceptions.V8JSError, ctx.run_script, 'function[]();')
 
@@ -245,13 +245,15 @@ class ContextTest(unittest.TestCase):
             ctx.run_script(script_oops2, identifier='my_other_file.js')
             ctx.run_script(script_long)
             self.assertEqual(
+                (
                     u'my_file_áéíóú.js:2\n'
-                    '      thereMayBeErrors();\n'
-                    '      ^\n'
-                    'ReferenceError: thereMayBeErrors is not defined\n'
-                    '    at oops (my_file_áéíóú.js:2:3)\n'
-                    '    at <anonymous>:1:1'.encode('utf-8'),
-                get_exception_message(ctx, 'oops()'))
+                    u'      thereMayBeErrors();\n'
+                    u'      ^\n'
+                    u'ReferenceError: thereMayBeErrors is not defined\n'
+                    u'    at oops (my_file_áéíóú.js:2:3)\n'
+                    u'    at <anonymous>:1:1'
+                ).encode('utf-8'),
+                get_exception_message(ctx, 'oops()').encode('utf-8'))
             self.assertEqual(
                 'my_other_file.js:2\n'
                 '      thereMayBeMoreErrors();\n'
