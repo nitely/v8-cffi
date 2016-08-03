@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 try:
     from unittest.mock import patch, Mock
 except ImportError:
@@ -190,7 +192,7 @@ class ContextTest(unittest.TestCase):
         """
         script_foo = b'var foo = "foo!";'
         script_bar = 'var bar = "bar!";'
-        script_special = u'var txt = "áéíóú";'.encode('utf-8')
+        script_special = 'var txt = "áéíóú";'
 
         with context.Context(self.vm) as ctx:
             ctx.run_script(script_foo)
@@ -198,7 +200,7 @@ class ContextTest(unittest.TestCase):
             ctx.run_script(script_special)
             self.assertEqual("foo!", ctx.run_script(b'foo'))
             self.assertEqual("bar!", ctx.run_script('bar'))
-            self.assertEqual(u"áéíóú".encode('utf-8'), ctx.run_script('txt').encode('utf-8'))
+            self.assertEqual("áéíóú", ctx.run_script('txt'))
             self.assertRaises(exceptions.V8JSError, ctx.run_script, 'baz')
             self.assertRaises(exceptions.V8JSError, ctx.run_script, 'function[]();')
 
@@ -241,19 +243,17 @@ class ContextTest(unittest.TestCase):
 
         # todo: trim source line when too long
         with context.Context(self.vm) as ctx:
-            ctx.run_script(script_oops, identifier=u'my_file_áéíóú.js'.encode('utf-8'))
+            ctx.run_script(script_oops, identifier='my_file_áéíóú.js')
             ctx.run_script(script_oops2, identifier='my_other_file.js')
             ctx.run_script(script_long)
             self.assertEqual(
-                (
-                    u'my_file_áéíóú.js:2\n'
-                    u'      thereMayBeErrors();\n'
-                    u'      ^\n'
-                    u'ReferenceError: thereMayBeErrors is not defined\n'
-                    u'    at oops (my_file_áéíóú.js:2:3)\n'
-                    u'    at <anonymous>:1:1'
-                ).encode('utf-8'),
-                get_exception_message(ctx, 'oops()').encode('utf-8'))
+                'my_file_áéíóú.js:2\n'
+                '      thereMayBeErrors();\n'
+                '      ^\n'
+                'ReferenceError: thereMayBeErrors is not defined\n'
+                '    at oops (my_file_áéíóú.js:2:3)\n'
+                '    at <anonymous>:1:1',
+                get_exception_message(ctx, 'oops()'))
             self.assertEqual(
                 'my_other_file.js:2\n'
                 '      thereMayBeMoreErrors();\n'
