@@ -11,7 +11,7 @@ from . import context
 __all__ = ['VM']
 
 
-class VM:
+class VM(object):
     """
     Holds the VM state (V8 isolate).\
     Running scripts within a VM is thread-safe,\

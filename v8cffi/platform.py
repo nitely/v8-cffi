@@ -22,7 +22,7 @@ def _read_file(path):
         return fh.read()
 
 
-class _Platform:
+class _Platform(object):
     """
     V8 platform environment. The underlying\
     platform is a singleton that must only\
