@@ -15,8 +15,6 @@ else:
 
 
 def start():
-    unittest.defaultTestLoader.discover('tests')
-
     with platform as _:
         unittest.main(
             module=None,
