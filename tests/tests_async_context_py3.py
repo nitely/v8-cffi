@@ -4,8 +4,6 @@ import unittest
 import logging
 import asyncio
 
-import six
-
 from v8cffi.platform import platform
 from v8cffi import exceptions
 from v8cffi.async.vm import VM
