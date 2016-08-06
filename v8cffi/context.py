@@ -38,6 +38,7 @@ def _is_utf_8(txt):
         return True
 
 
+@six.python_2_unicode_compatible
 class _String:
     """
     A wrapper for C(ffi) strings
@@ -82,7 +83,6 @@ class _String:
         self.string_ptr = None
         self.len_ptr = None
 
-    @six.python_2_unicode_compatible
     def __str__(self):
         """
         :return: Representation of the string
