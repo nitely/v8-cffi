@@ -10,7 +10,10 @@ with open(os.path.join(BASE_DIR, 'README.md')) as f:
     README = f.read()
 
 with open(os.path.join(BASE_DIR, 'requirements.txt')) as f:
-    REQUIREMENTS = f.read()
+    REQUIREMENTS = [
+        line.strip()
+        for line in f.readlines()
+        if line.strip()]
 
 VERSION = __import__('v8cffi').__version__
 
