@@ -14,7 +14,6 @@ logging.disable(logging.CRITICAL)
 
 
 def async_test(func):
-    @unittest.skipIf(six.PY2, "Python2 not supported")
     def wrapper(test_klass, *args, **kwargs):
         coro = asyncio.coroutine(func)
         future = coro(test_klass, *args, **kwargs)
@@ -30,6 +29,7 @@ def async_test(func):
     return wrapper
 
 
+@unittest.skipIf(six.PY2, "Python2 not supported")
 class ContextTest(unittest.TestCase):
 
     @async_test
