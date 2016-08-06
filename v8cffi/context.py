@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from _v8 import ffi, lib
+import six
 
 from . import exceptions
 
@@ -24,10 +25,10 @@ def _is_utf_8(txt):
     is utf-8 encoded or not
     :rtype: bool
     """
-    assert isinstance(txt, bytes)
+    assert isinstance(txt, six.binary_type)
 
     try:
-        _ = str(txt, 'utf-8')
+        _ = six.text_type(txt, 'utf-8')
     except (TypeError, UnicodeEncodeError):
         return False
     else:
@@ -83,7 +84,7 @@ class _String:
         :return: Representation of the string
         :rtype: str
         """
-        return str(self.to_bytes(), 'utf-8')
+        return six.text_type(self.to_bytes(), 'utf-8')
 
     def to_bytes(self):
         """
@@ -196,14 +197,14 @@ class Context:
         :raises V8Error: if there was\
         an error running the JS script
         """
-        assert isinstance(script, str) or _is_utf_8(script)
-        assert isinstance(identifier, str) or _is_utf_8(identifier)
+        assert isinstance(script, six.text_type) or _is_utf_8(script)
+        assert isinstance(identifier, six.text_type) or _is_utf_8(identifier)
 
-        if isinstance(script, str):
-            script = bytes(script, 'utf-8')
+        if isinstance(script, six.text_type):
+            script = script.encode('utf-8')
 
-        if isinstance(identifier, str):
-            identifier = bytes(identifier, 'utf-8')
+        if isinstance(identifier, six.text_type):
+            identifier = identifier.encode('utf-8')
 
         with _String() as output:
             with _String() as error:
@@ -219,6 +220,6 @@ class Context:
                     error.len_ptr)
 
                 if code != lib.E_V8_OK:
-                    raise exceptions.get_exception(code)(str(error))
+                    raise exceptions.get_exception(code)(six.text_type(error))
 
-                return str(output)
+                return six.text_type(output)

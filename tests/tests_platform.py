@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from unittest.mock import patch, Mock
+try:
+    from unittest.mock import patch, Mock
+except ImportError:
+    from mock import patch, Mock
+
 import unittest
 import logging
 import os
