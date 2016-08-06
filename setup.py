@@ -1,17 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import unicode_literals
 import os
 from setuptools import setup, find_packages
 
-__file_dir__ = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(__file__)
 
-with open(os.path.join(__file_dir__, 'README.md')) as f:
-    README = f.read()
+with open(os.path.join(BASE_DIR, 'README.md'), 'rb') as f:
+    README = f.read().decode('utf-8')
 
-with open(os.path.join(__file_dir__, 'requirements.txt')) as f:
-    REQUIREMENTS = f.read()
+with open(os.path.join(BASE_DIR, 'requirements.txt'), 'rb') as f:
+    REQUIREMENTS = f.read().decode('utf-8')
 
 VERSION = __import__('v8cffi').__version__
 
