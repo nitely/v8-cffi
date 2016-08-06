@@ -4,16 +4,17 @@ import unittest
 import logging
 import asyncio
 
+import six
+
 from v8cffi.platform import platform
 from v8cffi import exceptions
 from v8cffi.async.vm import VM
-from v8cffi.async.context import Context
-
 
 logging.disable(logging.CRITICAL)
 
 
 def async_test(func):
+    @unittest.skipIf(six.PY2, "Python2 not supported")
     def wrapper(test_klass, *args, **kwargs):
         coro = asyncio.coroutine(func)
         future = coro(test_klass, *args, **kwargs)
