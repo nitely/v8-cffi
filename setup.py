@@ -6,11 +6,11 @@ from setuptools import setup, find_packages
 
 BASE_DIR = os.path.dirname(__file__)
 
-with open(os.path.join(BASE_DIR, 'README.md'), 'rb') as f:
-    README = f.read().decode('utf-8')
+with open(os.path.join(BASE_DIR, 'README.md')) as f:
+    README = f.read()
 
-with open(os.path.join(BASE_DIR, 'requirements.txt'), 'rb') as f:
-    REQUIREMENTS = f.read().decode('utf-8')
+with open(os.path.join(BASE_DIR, 'requirements.txt')) as f:
+    REQUIREMENTS = f.read()
 
 VERSION = __import__('v8cffi').__version__
 
