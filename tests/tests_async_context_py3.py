@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 
-try:
-    import asyncio
-except ImportError:
-    asyncio = None
-
 import unittest
 import logging
+import asyncio
 
 import six
 
@@ -33,7 +29,6 @@ def async_test(func):
     return wrapper
 
 
-@unittest.skipIf(six.PY2, "Python2 not supported")
 class ContextTest(unittest.TestCase):
 
     @async_test
