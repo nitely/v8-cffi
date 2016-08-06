@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from _v8 import ffi, lib
+from __future__ import unicode_literals
+
 import six
+
+from _v8 import ffi, lib
 
 from . import exceptions
 
