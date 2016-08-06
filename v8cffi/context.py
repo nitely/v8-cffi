@@ -79,6 +79,7 @@ class _String:
         self.string_ptr = None
         self.len_ptr = None
 
+    @six.python_2_unicode_compatible
     def __str__(self):
         """
         :return: Representation of the string
