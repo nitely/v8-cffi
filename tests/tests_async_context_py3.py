@@ -16,9 +16,6 @@ from v8cffi.async.vm import VM
 
 logging.disable(logging.CRITICAL)
 
-if six.PY2:
-    raise unittest.SkipTest()
-
 
 def async_test(func):
     def wrapper(test_klass, *args, **kwargs):
