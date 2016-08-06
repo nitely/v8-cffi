@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
+
 from _v8 import ffi, lib
 
 from . import exceptions
@@ -9,7 +11,7 @@ from . import context
 __all__ = ['VM']
 
 
-class VM:
+class VM(object):
     """
     Holds the VM state (V8 isolate).\
     Running scripts within a VM is thread-safe,\

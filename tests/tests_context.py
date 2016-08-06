@@ -14,6 +14,7 @@ import tempfile
 from contextlib import contextmanager
 
 import six
+
 from v8cffi.platform import platform
 from v8cffi.vm import VM
 from v8cffi import exceptions

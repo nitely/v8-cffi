@@ -4,12 +4,12 @@
 import os
 from setuptools import setup, find_packages
 
-__file_dir__ = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(__file__)
 
-with open(os.path.join(__file_dir__, 'README.md')) as f:
+with open(os.path.join(BASE_DIR, 'README.md')) as f:
     README = f.read()
 
-with open(os.path.join(__file_dir__, 'requirements.txt')) as f:
+with open(os.path.join(BASE_DIR, 'requirements.txt')) as f:
     REQUIREMENTS = f.read()
 
 VERSION = __import__('v8cffi').__version__

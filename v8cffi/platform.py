@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+from __future__ import unicode_literals
 import os
 
 from _v8 import ffi, lib
@@ -21,7 +22,7 @@ def _read_file(path):
         return fh.read()
 
 
-class _Platform:
+class _Platform(object):
     """
     V8 platform environment. The underlying\
     platform is a singleton that must only\

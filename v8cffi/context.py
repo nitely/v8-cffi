@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from _v8 import ffi, lib
+from __future__ import unicode_literals
+
 import six
+
+from _v8 import ffi, lib
 
 from . import exceptions
 
@@ -35,7 +38,8 @@ def _is_utf_8(txt):
         return True
 
 
-class _String:
+@six.python_2_unicode_compatible
+class _String(object):
     """
     A wrapper for C(ffi) strings
 
@@ -94,7 +98,7 @@ class _String:
         return ffi.buffer(self.string_ptr[0], self.len_ptr[0])[:]
 
 
-class Context:
+class Context(object):
     """
     An execution environment that allows\
     separate, unrelated, JS applications\
