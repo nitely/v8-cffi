@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
+try:
+    import asyncio
+except ImportError:
+    asyncio = None
+
 import unittest
 import logging
-import asyncio
 
 import six
 
