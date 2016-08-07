@@ -8,6 +8,7 @@ if __name__ == "__main__":
     import functools
     import asyncio
     from v8cffi.platform import platform
+    from v8cffi.async.vm import VM
 
     OPS_NUMBER = 40000
 
@@ -18,20 +19,19 @@ if __name__ == "__main__":
     def do_all(loop):
 
         with platform as pm:
-            with pm.create_vm() as vm:
-                with vm.create_context(loop=loop) as context:
+            with VM(pm, loop=loop) as vm:
+                with vm.create_context() as context:
                     # hello = b'hi' * 10000
                     hello = b'hi'
-                    yield from context.run_script_async(b"var hello = '" + hello + b"';")
+                    yield from context.run_script(b"var hello = '" + hello + b"';")
                     # 110000 ops/s on a 1.8Ghz CPU
 
-                    futs = []
-
-                    for _ in range(OPS_NUMBER):
-                        futs.append(asyncio.ensure_future(context.run_script_async(b"hello")))
+                    futs = [
+                        asyncio.ensure_future(context.run_script(b"hello"), loop=loop)
+                        for _ in range(OPS_NUMBER)]
 
                     ts = time.time()
-                    yield from asyncio.wait(futs)
+                    yield from asyncio.gather(*futs, loop=loop)
                     te = time.time()
                     print('%f sec' % (te - ts))
 
