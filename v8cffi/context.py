@@ -210,6 +210,7 @@ class Context(object):
         :raises V8Error: if there was\
         an error running the JS script
         """
+        assert self.is_alive()
         assert isinstance(script, six.text_type) or _is_utf_8(script)
         assert isinstance(identifier, six.text_type) or _is_utf_8(identifier)
 
