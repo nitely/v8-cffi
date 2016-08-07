@@ -74,7 +74,7 @@ class _Platform(object):
 
     def is_alive(self):
         """
-        Check is initialized and was not exited
+        Check the platform is initialized and was not exited
 
         :return: Whether the platform is alive or not
         :rtype: bool
