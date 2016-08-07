@@ -6,7 +6,7 @@ Installation
 Compatibility
 -------------
 
-* Python 2.7, 3.4 and 3.5
+* Python 2.7, 3.4, 3.5 and PyPy 5.3
 
 .. Note::
 
