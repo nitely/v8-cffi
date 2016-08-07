@@ -36,7 +36,9 @@ class Context(context.Context):
     def _run_script_worker(self, *args, **kwargs):
         with self._worker_cond:
             if not self.is_alive():
-                return
+                raise RuntimeError(
+                    'run_script was scheduled but '
+                    'async.Context has already exited')
 
             self._workers_count += 1
 
@@ -64,10 +66,6 @@ class Context(context.Context):
         :return: The script result
         :rtype: coroutine
         """
-        assert self.is_alive(), (
-            'run_script was scheduled but '
-            'async.Context has already exited')
-
         return self._vm._loop.run_in_executor(
             self._vm._executor,
             functools.partial(
