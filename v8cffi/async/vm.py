@@ -34,6 +34,21 @@ class VM:
             concurrent.futures
             .ThreadPoolExecutor(max_workers=max_workers))
 
+    def __enter__(self):
+        self.vm.__enter__()
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        return self.vm.__exit__(*args, **kwargs)
+
+    @property
+    def executor(self):
+        return self._executor
+
+    @property
+    def loop(self):
+        return self._loop
+
     def create_context(self):
         """
         Create a :py:class:`.context.Context` for running\
@@ -45,7 +60,8 @@ class VM:
         return context.Context(self)
 
     def set_up(self):
-        return self.vm.set_up()
+        self.vm.set_up()
+        return self
 
     def tear_down(self):
         return self.vm.tear_down()

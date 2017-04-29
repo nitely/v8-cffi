@@ -18,17 +18,25 @@ class Context:
     """
     def __init__(self, vm):
         self.vm = vm
-        self.context = context.Context(vm)
+        self.context = context.Context(vm.vm)
+
+    def __enter__(self):
+        self.context.__enter__()
+        return self
+
+    def __exit__(self, *args, **kwargs):
+        return self.context.__exit__(*args, **kwargs)
 
     def set_up(self):
-        return self.context.set_up()
+        self.context.set_up()
+        return self
 
     def tear_down(self):
         """
         Wait for all workers to exit to prevent crashes
         """
         # todo: terminate current script
-        self.vm._executor.shutdown(wait=True)
+        self.vm.executor.shutdown(wait=True)
         return self.context.tear_down()
 
     def _run_script_worker(self, *args, **kwargs):
@@ -58,8 +66,8 @@ class Context:
         """
         # Passing positional args coz "func"
         # is named "callback" in py3.4
-        return self.vm._loop.run_in_executor(
-            self.vm._executor,
+        return self.vm.loop.run_in_executor(
+            self.vm.executor,
             functools.partial(
                 self._run_script_worker,
                 script=script,
