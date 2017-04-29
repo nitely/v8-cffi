@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import functools
-import threading
 
 from .. import context
 
@@ -11,43 +10,34 @@ __all__ = ['Context']
 _DEFAULT_SCRIPT_NAME = '<anonymous>'
 
 
-class Context(context.Context):
+class Context:
     """
     A Context providing asyncio support.
 
     This class is not thread safe.
     """
     def __init__(self, vm):
-        super().__init__(vm=vm)
-        self._workers_count = 0
-        self._worker_cond = threading.Condition()
+        self.vm = vm
+        self.context = context.Context(vm)
 
-    def __exit__(self, *_, **__):
+    def set_up(self):
+        return self.context.set_up()
+
+    def tear_down(self):
         """
         Wait for all workers to exit to prevent crashes
         """
-        with self._worker_cond:
-            # todo: terminate current script
-            self._worker_cond.wait_for(
-                lambda: not self._workers_count)
-
-            return super().__exit__()
+        # todo: terminate current script
+        self.vm._executor.shutdown(wait=True)
+        return self.context.tear_down()
 
     def _run_script_worker(self, *args, **kwargs):
-        with self._worker_cond:
-            if not self.is_alive():
-                raise RuntimeError(
-                    'run_script was scheduled but '
-                    'async.Context has already exited')
+        if not self.context.is_alive():
+            raise RuntimeError(
+                'run_script was scheduled but '
+                'async.Context has already exited')
 
-            self._workers_count += 1
-
-        try:
-            return super().run_script(*args, **kwargs)
-        finally:
-            with self._worker_cond:
-                self._workers_count -= 1
-                self._worker_cond.notify_all()
+        return self.context.run_script(*args, **kwargs)
 
     def run_script(self, script, identifier=_DEFAULT_SCRIPT_NAME):
         """
@@ -66,9 +56,11 @@ class Context(context.Context):
         :return: The script result
         :rtype: coroutine
         """
-        return self._vm._loop.run_in_executor(
-            self._vm._executor,
+        # Passing positional args coz "func"
+        # is named "callback" in py3.4
+        return self.vm._loop.run_in_executor(
+            self.vm._executor,
             functools.partial(
                 self._run_script_worker,
                 script=script,
-                identifier=_DEFAULT_SCRIPT_NAME))
+                identifier=identifier))
