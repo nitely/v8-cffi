@@ -13,7 +13,7 @@ __all__ = ['VM']
 _MAX_WORKERS = (os.cpu_count() or 1) * 2
 
 
-class VM(vm.VM):
+class VM:
     """
     Holds the VM state (V8 isolate).\
     Running scripts within a VM is thread-safe,\
@@ -28,11 +28,11 @@ class VM(vm.VM):
     :type platform: :py:class:`._Platform`
     """
     def __init__(self, platform, max_workers=_MAX_WORKERS, loop=None):
-        super().__init__(platform=platform)
+        self.vm = vm.VM(platform=platform)
         self._loop = loop or asyncio.get_event_loop()
-        self._executor = (concurrent
-                          .futures
-                          .ThreadPoolExecutor(max_workers=max_workers))
+        self._executor = (
+            concurrent.futures
+            .ThreadPoolExecutor(max_workers=max_workers))
 
     def create_context(self):
         """
@@ -43,3 +43,9 @@ class VM(vm.VM):
         :rtype: :py:class:`.context.Context`
         """
         return context.Context(self)
+
+    def set_up(self):
+        return self.vm.set_up()
+
+    def tear_down(self):
+        return self.vm.tear_down()
