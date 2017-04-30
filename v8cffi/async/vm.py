@@ -39,6 +39,8 @@ class VM:
         return self
 
     def __exit__(self, *args, **kwargs):
+        # Wait for all workers to exit to prevent crashes
+        self.executor.shutdown(wait=True)
         return self.vm.__exit__(*args, **kwargs)
 
     @property

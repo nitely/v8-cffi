@@ -28,8 +28,8 @@ class Context:
         """
         Wait for all workers to exit to prevent crashes
         """
-        # todo: terminate current script
-        self.vm.executor.shutdown(wait=True)
+        # todo: terminate current script ?
+        # todo: wait all threads to exit, scheduled included, do not cancel the tasks (user may do it)
         return self.context.__exit__(*args, **kwargs)
 
     def set_up(self):
