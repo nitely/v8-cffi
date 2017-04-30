@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import concurrent.futures
 import functools
+import asyncio
+import os
 
 from .. import context
 
@@ -8,17 +11,23 @@ from .. import context
 __all__ = ['Context']
 
 _DEFAULT_SCRIPT_NAME = '<anonymous>'
+_MAX_WORKERS = (os.cpu_count() or 1) * 2
 
 
 class Context:
     """
-    A Context providing asyncio support.
+    A Context providing asyncio\
+    support for running scripts.
 
     This class is not thread safe.
     """
-    def __init__(self, vm):
+    def __init__(self, vm, max_workers=_MAX_WORKERS, loop=None):
         self.vm = vm
-        self.context = context.Context(vm.vm)
+        self.context = context.Context(vm)
+        self._loop = loop or asyncio.get_event_loop()
+        self._executor = (
+            concurrent.futures
+            .ThreadPoolExecutor(max_workers=max_workers))
 
     def __enter__(self):
         self.context.__enter__()
@@ -29,7 +38,8 @@ class Context:
         Wait for all workers to exit to prevent crashes
         """
         # todo: terminate current script ?
-        # todo: wait all threads to exit, scheduled included, do not cancel the tasks (user may do it)
+        # Wait for all workers to exit to prevent crashes
+        self._executor.shutdown(wait=True)
         return self.context.__exit__(*args, **kwargs)
 
     def set_up(self):
@@ -39,11 +49,6 @@ class Context:
         return self.__exit__()
 
     def _run_script_worker(self, *args, **kwargs):
-        if not self.context.is_alive():
-            raise RuntimeError(
-                'run_script was scheduled but '
-                'async.Context has already exited')
-
         return self.context.run_script(*args, **kwargs)
 
     def run_script(self, script, identifier=_DEFAULT_SCRIPT_NAME):
@@ -63,10 +68,12 @@ class Context:
         :return: The script result
         :rtype: coroutine
         """
+        assert self.context.is_alive()
+
         # Passing positional args coz "func"
         # is named "callback" in py3.4
-        return self.vm.loop.run_in_executor(
-            self.vm.executor,
+        return self._loop.run_in_executor(
+            self._executor,
             functools.partial(
                 self._run_script_worker,
                 script=script,

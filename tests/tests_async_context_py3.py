@@ -6,7 +6,7 @@ import asyncio
 
 from v8cffi.platform import platform
 from v8cffi import exceptions
-from v8cffi.async.vm import VM
+from v8cffi.async.context import Context as AsyncContext
 
 logging.disable(logging.CRITICAL)
 
@@ -36,8 +36,8 @@ class ContextTest(unittest.TestCase):
         """
         script_foo = b'var foo = "foo!";'
 
-        with VM(platform, loop=self.loop) as vm:
-            with vm.create_context() as ctx:
+        with platform.create_vm() as vm:
+            with AsyncContext(vm=vm, loop=self.loop) as ctx:
                 yield from ctx.run_script(script_foo)
                 self.assertEqual("foo!", (yield from ctx.run_script(b'foo')))
 
@@ -47,7 +47,7 @@ class ContextTest(unittest.TestCase):
                 except exceptions.V8JSError:
                     pass
 
-            with vm.create_context() as ctx:
+            with AsyncContext(vm=vm, loop=self.loop) as ctx:
                 try:
                     yield from ctx.run_script('foo')
                     raise AssertionError('V8JSError was expected')
@@ -66,8 +66,8 @@ class ContextTest(unittest.TestCase):
 
         script_foo = b'var foo = "foo!";'
 
-        with VM(platform, loop=self.loop) as vm:
-            with vm.create_context() as ctx:
+        with platform.create_vm() as vm:
+            with AsyncContext(vm=vm, loop=self.loop) as ctx:
                 yield from ctx.run_script(script_foo)
 
                 done, pending = yield from asyncio.wait(
@@ -87,8 +87,8 @@ class ContextTest(unittest.TestCase):
         """
         # todo: implement ctx.terminate()
         # This should block for ever
-        with VM(platform, loop=self.loop) as vm:
-            with vm.create_context() as ctx:
+        with platform.create_vm() as vm:
+            with AsyncContext(vm=vm, loop=self.loop) as ctx:
                 pass
                 # yield from asyncio.wait_for(
                 #    ctx.run_script(b"while (true){}"), timeout=1, loop=self.loop)
