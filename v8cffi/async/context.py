@@ -19,6 +19,14 @@ class Context:
     A Context providing asyncio\
     support for running scripts.
 
+    Due to the VM's GIL just one script\
+    can run at a time. Increasing the\
+    number of workers beyond 1 will only\
+    yield better results when most of the\
+    time is spent on the cffi layer instead\
+    of the JS script (ie: when the JS script\
+    does ~nothing).
+
     This class is not thread safe.
     """
     def __init__(self, vm, max_workers=_MAX_WORKERS, loop=None):
@@ -57,7 +65,9 @@ class Context:
         it start a new thread, future calls will\
         enqueue the work to the child thread(s).
 
-        There is no way to stop a script that is running.
+        There is no way to stop a script that is running.\
+        Timeouts won't work as expected either,\
+        since the thread will keep running regardless of it.
 
         :param script: utf-8 encoded or unicode string
         :type script: bytes or str
