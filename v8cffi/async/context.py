@@ -25,19 +25,18 @@ class Context:
         return self
 
     def __exit__(self, *args, **kwargs):
-        return self.context.__exit__(*args, **kwargs)
-
-    def set_up(self):
-        self.context.set_up()
-        return self
-
-    def tear_down(self):
         """
         Wait for all workers to exit to prevent crashes
         """
         # todo: terminate current script
         self.vm.executor.shutdown(wait=True)
-        return self.context.tear_down()
+        return self.context.__exit__(*args, **kwargs)
+
+    def set_up(self):
+        return self.__enter__()
+
+    def tear_down(self):
+        return self.__exit__()
 
     def _run_script_worker(self, *args, **kwargs):
         if not self.context.is_alive():
