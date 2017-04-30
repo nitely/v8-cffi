@@ -11,6 +11,7 @@ class V8Error(Exception):
     related errors
     """
 
+
 class V8JSError(V8Error):
     """
     Error raised when a JS\
@@ -19,11 +20,13 @@ class V8JSError(V8Error):
     explanation of the cause of the error
     """
 
+
 class V8MemoryError(V8Error):
     """
     Error raised when an allocation fails,\
     this usually means out of memory
     """
+
 
 class V8UnknownError(V8Error):
     """

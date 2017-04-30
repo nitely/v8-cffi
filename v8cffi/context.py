@@ -121,7 +121,7 @@ class Context(object):
         """
         See :py:func:`set_up` method for docs
         """
-        assert self._c_context is None
+        assert not self.is_alive()
         assert self._vm.is_alive()
 
         self._c_context = ffi.new('v8cffi_context_t **')
@@ -137,11 +137,20 @@ class Context(object):
         """
         See :py:func:`tear_down` method for docs
         """
-        assert self._c_context is not None
+        assert self.is_alive()
         assert self._vm.is_alive()
 
         lib.v8cffi_context_free(self._c_context[0])
         self._c_context = None
+
+    def is_alive(self):
+        """
+        Check the context is initialized and was not exited
+
+        :return: Whether the context is alive or not
+        :rtype: bool
+        """
+        return self._c_context is not None
 
     def set_up(self):
         """
@@ -201,6 +210,7 @@ class Context(object):
         :raises V8Error: if there was\
         an error running the JS script
         """
+        assert self.is_alive()
         assert isinstance(script, six.text_type) or _is_utf_8(script)
         assert isinstance(identifier, six.text_type) or _is_utf_8(identifier)
 
